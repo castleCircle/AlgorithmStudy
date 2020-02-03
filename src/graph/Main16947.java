@@ -44,7 +44,7 @@ public class Main16947 {
             a[u].add(v);
             a[v].add(u);
         }
-        go(0, -1);
+        go(0, -1); //여기서부터 이해가 안되넹
         Queue<Integer> q = new LinkedList<>();
         for (int i=0; i<n; i++) {
             if (check[i] == 2) {
