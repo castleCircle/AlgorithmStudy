@@ -1,71 +1,73 @@
-package graph;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
-
+import java.io.*;
+import java.util.*;
 public class Main16947 {
-	static ArrayList<Integer>[] a;
-    static int[] check;
-    static int[] dist;
-    static int go(int x, int p) {
-        // -2: found cycle and not included
-        // -1: not found cycle
-        // 0~n-1: found cycle and start index
-        if (check[x] == 1) {
-            return x;
-        }
-        check[x] = 1;
-        for (int y : a[x]) {
-            if (y == p) continue;
-            int res = go(y, x);
-            if (res == -2) return -2;
-            if (res >= 0) {
-                check[x] = 2;
-                if (x == res) return -2;
-                else return res;
-            }
-        }
-        return -1;
-    }
-    public static void main(String args[]) {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        a = new ArrayList[n];
-        dist = new int[n];
-        check = new int[n];
-        for (int i=0; i<n; i++) {
-            a[i] = new ArrayList<>();
-        }
-        for (int i=0; i<n; i++) {
-            int u = sc.nextInt()-1;
-            int v = sc.nextInt()-1;
-            a[u].add(v);
-            a[v].add(u);
-        }
-        go(0, -1); //여기서부터 이해가 안되넹
-        Queue<Integer> q = new LinkedList<>();
-        for (int i=0; i<n; i++) {
-            if (check[i] == 2) {
-                dist[i] = 0;
-                q.add(i);
-            } else {
-                dist[i] = -1;
-            }
-        }
-        while (!q.isEmpty()) {
-            int x = q.remove();
-            for (int y : a[x]) {
-                if (dist[y] == -1) {
-                    q.add(y);
-                    dist[y] = dist[x]+1;
-                }
-            }
-        }
-        for (int i=0; i<n; i++) {
-            System.out.print(dist[i] + " ");
-        }
-        System.out.println();
-    }
+	static int N;
+	static int dist[];
+	static int visited[];
+	static ArrayList<Integer> arr[];
+	// 0 : 탐색 진행 x, 1 : 탐색했지만 순환은 아님, 2: 탐색했는데 순환
+	static boolean dfs(int pre, int cur) {
+		boolean result = false;
+		
+		for(int n : arr[cur]) {
+			if(n == pre) continue;
+			if(visited[n] == 0) {
+				visited[n] = 1;
+				result = dfs(cur, n);
+				if(result) {
+					if(visited[cur] == 2) return false;
+					else {
+						visited[cur] = 2;
+						return true;
+					}
+				}
+			}else if(visited[n] == 1) { 	// 이전에 탐색한 곳으로 돌아옴
+				visited[n] = 2;
+				visited[cur] = 2;
+				return true;
+				
+			}
+		}
+		return false;
+	}
+
+	public static void main(String[] args) throws IOException{
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		N = Integer.parseInt(br.readLine());
+		dist = new int[N+1];
+		arr = new ArrayList[N+1];
+		visited = new int[N+1];
+		for(int i = 1 ; i <= N ; i++) arr[i] = new ArrayList<>();
+		for(int i = 0 ; i < N ; i++) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			int u = Integer.parseInt(st.nextToken());
+			int v = Integer.parseInt(st.nextToken());
+			arr[u].add(v);
+			arr[v].add(u);
+		}
+		Queue<Integer> q = new LinkedList<>();
+		visited[1] = 1;
+		dfs(0,1);
+		for(int i = 1 ; i <= N ; i++) {
+			if(visited[i] == 2) {
+				dist[i] = 1;
+				q.add(i);
+			}
+		}
+		
+		while(!q.isEmpty()) {
+			int p = q.poll();
+			for(int y : arr[p]) {
+				if(dist[y] == 0) {
+					dist[y] = dist[p] + 1;
+					q.add(y);
+				}
+			}
+		}
+		
+		for(int i = 1 ; i <= N ; i++) System.out.print(dist[i]-1 + " ");
+		
+		
+	}
+
 }
