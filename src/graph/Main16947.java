@@ -1,3 +1,5 @@
+package graph;
+
 import java.io.*;
 import java.util.*;
 public class Main16947 {
@@ -66,7 +68,6 @@ public class Main16947 {
 		}
 		
 		for(int i = 1 ; i <= N ; i++) System.out.print(dist[i]-1 + " ");
-		
 		
 	}
 
